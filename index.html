@@ -6,37 +6,329 @@
   <title>User Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4cc9f0;
+      --warning-color: #f8961e;
+      --danger-color: #f72585;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .bg-blob {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      opacity: 0.1;
+      z-index: -1;
+      animation: blob-morph 15s ease-in-out infinite alternate;
+    }
+
+    .bg-blob:nth-child(1) {
+      top: -300px;
+      left: -300px;
+    }
+
+    .bg-blob:nth-child(2) {
+      bottom: -300px;
+      right: -300px;
+    }
+
+    @keyframes blob-morph {
+      0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 450px;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .auth-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .auth-card .card-body {
+      padding: 2.5rem;
+    }
+
+    .auth-card h2 {
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .auth-card h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 50px;
+      height: 4px;
+      background: var(--accent-color);
+      border-radius: 2px;
+    }
+
+    .form-control {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .login-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      border-radius: 50%;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .alternative-login {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .facebook {
+      background-color: #3b5998;
+    }
+
+    .google {
+      background-color: #db4437;
+    }
+
+    .twitter {
+      background-color: #1da1f2;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e0e0e0;
+    }
+
+    .divider-text {
+      padding: 0 1rem;
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .modal-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-icon {
+      color: var(--success-color);
+    }
+
+    .warning-icon {
+      color: var(--warning-color);
+    }
+
+    .danger-icon {
+      color: var(--danger-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+      .auth-container {
+        padding: 1rem;
+      }
+      
+      .auth-card .card-body {
+        padding: 1.5rem;
+      }
+      
+      .login-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
 </head>
 <body>
-  <div class="auth-container">
+  <!-- Background blobs -->
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="auth-container animate__animated animate__fadeIn">
     <div class="card auth-card">
       <div class="card-body">
-        <h2 class="text-center mb-4">User Login</h2>
+        <!-- Animated login icon -->
+        <div class="login-icon floating">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+          </svg>
+        </div>
         
-        <form id="loginForm">
+        <h2 class="text-center">User Login</h2>
+        
+        <form id="loginForm" class="animate__animated animate__fadeInUp">
           <div class="mb-3">
             <label for="email" class="form-label">Email or Phone Number</label>
-            <input type="text" class="form-control" id="loginEmail" required>
+            <div class="input-group">
+              <span class="input-group-text">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
+                </svg>
+              </span>
+              <input type="text" class="form-control" id="loginEmail" placeholder="Enter your email or phone" required>
+            </div>
           </div>
           
-          <button type="submit" class="btn btn-primary w-100">Login</button>
+          <button type="submit" class="btn btn-primary w-100 mt-3">
+            <span class="me-2">Login</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+          </button>
+
+          <div class="divider">
+            <span class="divider-text">OR</span>
+          </div>
+
+          <div class="alternative-login">
+            <a href="#" class="social-btn facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-btn google">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-btn twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+              </svg>
+            </a>
+          </div>
         </form>
         
-        <div class="text-center mt-3">
-          <p>Don't have an account? <a href="register.html">Register here</a></p>
+        <div class="text-center mt-4 animate__animated animate__fadeInUp">
+          <p class="text-muted">Don't have an account? <a href="register.html" class="text-primary fw-bold">Register here</a></p>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Modals (same as before) -->
   <!-- Success Modal -->
   <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body text-center p-4">
           <div class="mb-3">
-            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+            <i class="bi bi-check-circle-fill modal-icon success-icon"></i>
           </div>
           <h4 id="successMessage">Login successful!</h4>
           <p>Redirecting to your dashboard...</p>
@@ -51,7 +343,7 @@
       <div class="modal-content">
         <div class="modal-body text-center p-4">
           <div class="mb-3">
-            <i class="bi bi-hourglass-split text-warning" style="font-size: 3rem;"></i>
+            <i class="bi bi-hourglass-split modal-icon warning-icon"></i>
           </div>
           <h4>Account Pending</h4>
           <p>Your account is pending approval. Please wait for admin approval.</p>
@@ -67,7 +359,7 @@
       <div class="modal-content">
         <div class="modal-body text-center p-4">
           <div class="mb-3">
-            <i class="bi bi-calendar-x-fill text-danger" style="font-size: 3rem;"></i>
+            <i class="bi bi-calendar-x-fill modal-icon danger-icon"></i>
           </div>
           <h4>Account Expired</h4>
           <p>Your account has expired. Please renew to continue.</p>
@@ -113,7 +405,7 @@
       <div class="modal-content">
         <div class="modal-body text-center p-4">
           <div class="mb-3">
-            <i class="bi bi-person-x-fill text-danger" style="font-size: 3rem;"></i>
+            <i class="bi bi-person-x-fill modal-icon danger-icon"></i>
           </div>
           <h4>Account Not Found</h4>
           <p>No account found with these details. Please register first.</p>
@@ -129,7 +421,7 @@
       <div class="modal-content">
         <div class="modal-body text-center p-4">
           <div class="mb-3">
-            <i class="bi bi-slash-circle-fill text-danger" style="font-size: 3rem;"></i>
+            <i class="bi bi-slash-circle-fill modal-icon danger-icon"></i>
           </div>
           <h4>Account Declined</h4>
           <p>Your account has been declined by admin.</p>
@@ -140,6 +432,109 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="auth.js"></script>
+  <script>
+    // Same JavaScript as before for form handling
+    document.addEventListener('DOMContentLoaded', function() {
+      const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+
+      // Login form submission
+      if (document.getElementById('loginForm')) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const emailOrPhone = document.getElementById('loginEmail').value;
+          
+          const params = new URLSearchParams({
+            action: 'login',
+            email: emailOrPhone,
+            phone: emailOrPhone
+          });
+          
+          fetch(`${scriptUrl}?${params.toString()}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+              successModal.show();
+              
+              localStorage.setItem('user', JSON.stringify(data.user));
+              
+              setTimeout(() => {
+                window.location.href = 'home.html';
+              }, 2000);
+            } else {
+              switch(data.status) {
+                case 'not_found':
+                  new bootstrap.Modal(document.getElementById('notFoundModal')).show();
+                  break;
+                case 'pending':
+                  new bootstrap.Modal(document.getElementById('pendingModal')).show();
+                  break;
+                case 'expired':
+                  const expiredModal = new bootstrap.Modal(document.getElementById('expiredModal'));
+                  expiredModal.show();
+                  document.getElementById('renewEmail').value = data.user.email;
+                  document.getElementById('renewPhone').value = data.user.phone;
+                  break;
+                case 'declined':
+                  new bootstrap.Modal(document.getElementById('declinedModal')).show();
+                  break;
+                default:
+                  alert(data.message);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to login. Please try again.');
+          });
+        });
+      }
+
+      // Renew button in expired modal
+      if (document.getElementById('renewBtn')) {
+        document.getElementById('renewBtn').addEventListener('click', function() {
+          bootstrap.Modal.getInstance(document.getElementById('expiredModal')).hide();
+          new bootstrap.Modal(document.getElementById('renewalModal')).show();
+        });
+      }
+
+      // Submit renewal form
+      if (document.getElementById('submitRenewalBtn')) {
+        document.getElementById('submitRenewalBtn').addEventListener('click', function() {
+          const email = document.getElementById('renewEmail').value;
+          const phone = document.getElementById('renewPhone').value;
+          const proof = document.getElementById('renewProof').value;
+          
+          const params = new URLSearchParams({
+            action: 'renew',
+            email: email,
+            phone: phone,
+            proof: proof
+          });
+          
+          fetch(scriptUrl, {
+            method: 'POST',
+            body: params
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              bootstrap.Modal.getInstance(document.getElementById('renewalModal')).hide();
+              const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+              document.getElementById('successMessage').textContent = data.message;
+              successModal.show();
+            } else {
+              alert(data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to submit renewal. Please try again.');
+          });
+        });
+      }
+    });
+  </script>
 </body>
 </html>
