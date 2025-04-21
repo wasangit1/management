@@ -1388,4 +1388,267 @@
             <button class="btn btn-sm btn-danger btn-action delete-btn" data-id="${user.ID}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16">
                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                <path fill-rule="evenodd"
+                
+
+
+
+
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+            </button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Add event listeners to action buttons
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const userId = this.getAttribute('data-id');
+          viewUser(userId);
+        });
+      });
+      
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const userId = this.getAttribute('data-id');
+          editUser(userId);
+        });
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const userId = this.getAttribute('data-id');
+          confirmDelete(userId);
+        });
+      });
+    }
+
+    // Render pagination
+    function renderPagination(totalItems, perPage, currentPage) {
+      const totalPages = Math.ceil(totalItems / perPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+      
+      if (totalPages <= 1) return;
+      
+      // Previous button
+      const prevLi = document.createElement('li');
+      prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+      prevLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      `;
+      prevLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+          loadUsers(currentPage - 1, currentStatusFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      pagination.appendChild(prevLi);
+      
+      // Page numbers
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      // Adjust if we're at the end
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      // First page and ellipsis if needed
+      if (startPage > 1) {
+        const firstLi = document.createElement('li');
+        firstLi.className = 'page-item';
+        firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
+        firstLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadUsers(1, currentStatusFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        pagination.appendChild(firstLi);
+        
+        if (startPage > 2) {
+          const ellipsisLi = document.createElement('li');
+          ellipsisLi.className = 'page-item disabled';
+          ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+          pagination.appendChild(ellipsisLi);
+        }
+      }
+      
+      // Page numbers
+      for (let i = startPage; i <= endPage; i++) {
+        const pageLi = document.createElement('li');
+        pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        pageLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadUsers(i, currentStatusFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        pagination.appendChild(pageLi);
+      }
+      
+      // Last page and ellipsis if needed
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          const ellipsisLi = document.createElement('li');
+          ellipsisLi.className = 'page-item disabled';
+          ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+          pagination.appendChild(ellipsisLi);
+        }
+        
+        const lastLi = document.createElement('li');
+        lastLi.className = 'page-item';
+        lastLi.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+        lastLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadUsers(totalPages, currentStatusFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        pagination.appendChild(lastLi);
+      }
+      
+      // Next button
+      const nextLi = document.createElement('li');
+      nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+      nextLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      `;
+      nextLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+          loadUsers(currentPage + 1, currentStatusFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      pagination.appendChild(nextLi);
+    }
+
+    // View user details
+    function viewUser(userId) {
+      const user = filteredData.find(u => u.ID === userId);
+      if (!user) return;
+      
+      document.getElementById('viewName').textContent = user.Name;
+      document.getElementById('viewEmail').textContent = user.Email;
+      document.getElementById('viewPhone').textContent = user.Phone;
+      document.getElementById('viewSchool').textContent = user.School;
+      
+      // Status with icon
+      let statusHtml = '';
+      switch(user.Status) {
+        case 'Pending':
+          statusHtml = `
+            <span class="badge badge-pending status-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#f8961e" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+              </svg>
+              Pending
+            </span>
+          `;
+          break;
+        case 'Active':
+          statusHtml = `
+            <span class="badge badge-active status-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#4cc9f0" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
+              Active
+            </span>
+          `;
+          break;
+        case 'Expired':
+          statusHtml = `
+            <span class="badge badge-expired status-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#f72585" viewBox="0 0 16 16">
+                <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.956 7.956 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
+                <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
+                <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+              </svg>
+              Expired
+            </span>
+          `;
+          break;
+        case 'Declined':
+          statusHtml = `
+            <span class="badge badge-declined status-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#6c757d" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
+              Declined
+            </span>
+          `;
+          break;
+      }
+      document.getElementById('viewStatus').innerHTML = statusHtml;
+      
+      let validUntil = 'N/A';
+      if (user.ValidUntil) {
+        const date = new Date(user.ValidUntil);
+        validUntil = date.toLocaleDateString();
+      }
+      document.getElementById('viewValidUntil').textContent = validUntil;
+      document.getElementById('viewProof').textContent = user.Proof;
+      
+      const modal = new bootstrap.Modal(document.getElementById('viewUserModal'));
+      modal.show();
+    }
+
+    // Edit user
+    function editUser(userId) {
+      const user = filteredData.find(u => u.ID === userId);
+      if (!user) return;
+      
+      document.getElementById('editId').value = user.ID;
+      document.getElementById('editName').value = user.Name;
+      document.getElementById('editEmail').value = user.Email;
+      document.getElementById('editPhone').value = user.Phone;
+      document.getElementById('editSchool').value = user.School;
+      document.getElementById('editProof').value = user.Proof;
+      document.getElementById('editStatus').value = user.Status;
+      
+      if (user.ValidUntil) {
+        const date = new Date(user.ValidUntil);
+        const formattedDate = date.toISOString().split('T')[0];
+        document.getElementById('editValidUntil').value = formattedDate;
+      } else {
+        document.getElementById('editValidUntil').value = '';
+      }
+      
+      const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+      modal.show();
+    }
+
+    // Confirm delete
+    function confirmDelete(userId) {
+      document.getElementById('deleteId').value = userId;
+      const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      modal.show();
+    }
+
+    // Perform search
+    function performSearch() {
+      if (!currentSearchTerm) {
+        filteredData = usersData;
+      } else {
+        filteredData = usersData.filter(user => 
+          user.Name.toLowerCase().includes(currentSearchTerm) ||
+          user.Email.toLowerCase().includes(currentSearchTerm) ||
+          user.Phone.toLowerCase().includes(currentSearchTerm)
+        );
+      }
+      renderUsersTable();
+      renderPagination(filteredData.length, perPage, 1);
+    }
+  </script>
+</body>
+</html>
