@@ -383,10 +383,10 @@
             <input type="hidden" id="renewPhone">
             
             <div class="mb-3">
-              <label for="renewProof" class="form-label">New Uthibitisho wa muamala</label>
+              <label for="renewProof" class="form-label">New..! Uthibitisho wa muamala</label>
               <textarea class="form-control" id="renewProof" rows="3" required></textarea>
               <div class="form-text">
-                Must include WAZIRI SAIDI NTATIE or one of these numbers: 0712345678, 0755123456, 0767123456, 0789123456
+                Hakikisha umelipia kiasi husika na kuweka uthibitisho wa muamala hapa.
               </div>
             </div>
           </form>
@@ -436,110 +436,6 @@
  <script src="auth.js"> </script>
   
  
- <!--
- <script>
-    // Same JavaScript as before for form handling
-    document.addEventListener('DOMContentLoaded', function() {
-      const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
-
-      // Login form submission
-      if (document.getElementById('loginForm')) {
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          const emailOrPhone = document.getElementById('loginEmail').value;
-          
-          const params = new URLSearchParams({
-            action: 'login',
-            email: emailOrPhone,
-            phone: emailOrPhone
-          });
-          
-          fetch(`${scriptUrl}?${params.toString()}`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-              successModal.show();
-              
-              localStorage.setItem('user', JSON.stringify(data.user));
-              
-              setTimeout(() => {
-                window.location.href = 'home.html';
-              }, 2000);
-            } else {
-              switch(data.status) {
-                case 'not_found':
-                  new bootstrap.Modal(document.getElementById('notFoundModal')).show();
-                  break;
-                case 'pending':
-                  new bootstrap.Modal(document.getElementById('pendingModal')).show();
-                  break;
-                case 'expired':
-                  const expiredModal = new bootstrap.Modal(document.getElementById('expiredModal'));
-                  expiredModal.show();
-                  document.getElementById('renewEmail').value = data.user.email;
-                  document.getElementById('renewPhone').value = data.user.phone;
-                  break;
-                case 'declined':
-                  new bootstrap.Modal(document.getElementById('declinedModal')).show();
-                  break;
-                default:
-                  alert(data.message);
-              }
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to login. Please try again.');
-          });
-        });
-      }
-
-      // Renew button in expired modal
-      if (document.getElementById('renewBtn')) {
-        document.getElementById('renewBtn').addEventListener('click', function() {
-          bootstrap.Modal.getInstance(document.getElementById('expiredModal')).hide();
-          new bootstrap.Modal(document.getElementById('renewalModal')).show();
-        });
-      }
-
-      // Submit renewal form
-      if (document.getElementById('submitRenewalBtn')) {
-        document.getElementById('submitRenewalBtn').addEventListener('click', function() {
-          const email = document.getElementById('renewEmail').value;
-          const phone = document.getElementById('renewPhone').value;
-          const proof = document.getElementById('renewProof').value;
-          
-          const params = new URLSearchParams({
-            action: 'renew',
-            email: email,
-            phone: phone,
-            proof: proof
-          });
-          
-          fetch(scriptUrl, {
-            method: 'POST',
-            body: params
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              bootstrap.Modal.getInstance(document.getElementById('renewalModal')).hide();
-              const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-              document.getElementById('successMessage').textContent = data.message;
-              successModal.show();
-            } else {
-              alert(data.message);
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to submit renewal. Please try again.');
-          });
-        });
-      }
-    });
-  </script> -->
+ 
 </body>
 </html>
